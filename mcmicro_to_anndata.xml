@@ -21,7 +21,7 @@
         <param argument="image_path" type="data" format="tabular,csv" multiple="true" label="Select the input image or images" />
         <param argument="drop_markers" type="text" optional="true" label="List of markers to drop from the analysis" help="No quotes, separated by comma. e.g. CD3D, CD20." />
         <section name="options" title="Advanced Options" expanded="False">
-            <param argument="remove_dnas" optional="true" type="boolean" truevalue="booltrue" falsevalue="boolfalse" checked="true" label="Whether to Remove the DNA channels from the final output" help="Looks for channels with the string 'dna' in it." />
+            <param argument="remove_dna" optional="true" type="boolean" truevalue="booltrue" falsevalue="boolfalse" checked="true" label="Whether to Remove the DNA channels from the final output" help="Looks for channels with the string 'dna' in it." />
             <param argument="remove_string_from_name" type="text" optional="true" label="Remove string from name" help="Used to clean up channel names. If a string is given, that particular string will be removed from all marker names.
         If multiple images are passed, just use the string that appears in the first image." />
             <param argument="log" optional="true" type="boolean" truevalue="booltrue" falsevalue="boolfalse" checked="true" label="Whether to log the data" help="log1p transformation will be applied" />
