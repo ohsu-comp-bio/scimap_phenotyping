@@ -21,8 +21,11 @@ def main(inputs, outfile):
         params = json.load(param_handler)
 
     image_path = params['image_path']
-    drop_markers = params['drop_markers'].split(',')
-    drop_markers = [x.strip() for x in drop_markers]
+    drop_markers = params['drop_markers']
+    if not drop_markers:
+        drop_markers = None
+    else:
+        drop_markers = [x.strip() for x in drop_markers.split(',')]
     options = params['options']
     for k, v in options.items():
         if v == '':
