@@ -6,6 +6,7 @@
     <xml name="python_requirements">
         <requirements>
             <requirement type="package" version="0.15.1">scimap</requirement>
+            <yield />
         </requirements>
     </xml>
 
