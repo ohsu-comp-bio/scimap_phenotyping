@@ -47,9 +47,11 @@ def main(inputs, output, image, anndata, masks=None):
         )
     dataset.add_object(MultiImageWrapper(image_wrappers))
     cell_set_obs = params['phenotyping']
-    if isinstance(cell_set_obs, list):
+    if not isinstance(cell_set_obs, list):
         cell_set_obs = cell_set_obs.split(',')
     cell_set_obs_names = [obj[0].upper() + obj[1:] for obj in cell_set_obs]
+    print(cell_set_obs)
+    print(cell_set_obs_names)
     dataset.add_object(
         AnnDataWrapper(
             adata,
