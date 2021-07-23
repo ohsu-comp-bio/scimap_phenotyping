@@ -43,7 +43,7 @@ def main(inputs, output, image, anndata, masks=None):
     image_wrappers=[OmeTiffWrapper(img_path=image, name='OMETIFF')]
     if masks:
         image_wrappers.append(
-            OmeTiffWrapper(img_path=masks, name='OMETIFF')
+            OmeTiffWrapper(img_path=masks, name='MASKS', is_bitmask=True)
         )
     dataset.add_object(MultiImageWrapper(image_wrappers))
     cell_set_obs = params['phenotyping']
@@ -66,7 +66,7 @@ def main(inputs, output, image, anndata, masks=None):
     scattorplot = vc.add_view(dataset, cm.SCATTERPLOT, mapping="UMAP")
     status = vc.add_view(dataset, cm.STATUS)
     lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
-    vc.layout(spatial | (lc / cellsets / scattorplot ));
+    vc.layout(spatial | lc | (status / cellsets / scattorplot ))
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:
