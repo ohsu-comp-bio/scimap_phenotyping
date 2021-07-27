@@ -4,28 +4,20 @@
         <import>main_macros.xml</import>
     </macros>
     <expand macro="python_requirements">
-        <!-- <requirement type="package" version="0.1.0a11">vitessce</requirement> -->
-        <!-- <requirement type="package" version="6.6.0">bftools</requirement> -->
     </expand>
     <expand macro="macro_stdio" />
     <version_command>echo "@VERSION@"</version_command>
     <command>
         <![CDATA[
-        mkdir -p '${output.files_path}/A/0' &&
-        ln -sf '$image' '${output.files_path}/A/0/image01.ome.tiff' &&
-        #if $masks
-            bfconvert -pyramid-resolutions 4 -pyramid-scale 2 '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
-        #end if
         python '$__tool_directory__/scimap_phenotyping.py'
-            --inputs '$inputs'
-            --output '${output.files_path}'
-            --image '${output.files_path}/A/0/image01.ome.tiff'
-            #if $masks
-                --masks '${output.files_path}/A/0/masks01.ome.tiff'
+            --adata '$anndata'
+            #if $manual_gate
+                --munal_gate '$manual_gate'
+                --munal_gate_ext '${manual_gate.ext}'
             #end if
-            --anndata '$anndata' &&
-
-        cp '$__tool_directory__/scimap_phenotyping.html' '$output';
+            --gating_workflow '$gating_workflow'
+            --gating_workflow_ext '${gating_workflow.ext}'
+            --output '$output'
 
         ]]>
     </command>
@@ -33,18 +25,13 @@
         <inputs name="inputs" />
     </configfiles>
     <inputs>
-        <param name="image" type="data" format="ome.tiff" label="Select the OME Tiff image" />
-        <param name="masks" type="data" format="tiff,ome.tiff" optional="true" label="Select masks for the OME Tiff image (Optional)" />
-        <param name="anndata" type="data" format="h5ad" label="Select the anndata contaning phenotyping info" />
-        <param name="name" type="text" optional="true" value="dataset01" label="Input the dataset short name" />
-        <param name="description" type="text" optional="true" value="Description of dataset01" label="Input the description of the dataset" />
-        <param name="phenotyping" type="select" multiple="true" display="checkboxes" label="Select the phenotyping keys" >
-            <option value="leiden">'leiden' (via clustering)</option>
-            <option value="phenotype" selected="true">'phenotype' (via scimap phenotyping)</option>
-        </param>
+        <param name="anndata" type="data" format="h5ad" label="Select the input anndata" />
+        <param name="manual_gate" type="data" format="tabular,csv" optional="true" label="Select the dataset containing manual gate information" help="First column as markers and second column as the gate values in log1p scale. If a marker is not included, auto gating
+        based on gaussian mixture modeling will be executed. Optional."/>
+        <param name="gating_workflow" type="data" format="tabular,csv" label="Select the dataset containing gating workflow" />
     </inputs>
     <outputs>
-        <data format="html" name="output" />
+        <data format="h5ad" name="output" />
     </outputs>
     <tests>
         <test>
@@ -53,6 +40,16 @@
     <help>
         <![CDATA[
 **What it does**
+
+This tool does single cell phenotyping via either manual gating or auto gating (gaussian mixture modeling) using Scimap.
+
+**Input**
+
+AnnData.
+
+**Output**
+
+Anndata with "obs/phenotype" added.
 
 
         ]]>

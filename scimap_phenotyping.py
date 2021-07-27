@@ -1,88 +1,70 @@
 import argparse
-import json
 import warnings
 
+import pandas as pd
+import scimap as sm
 from pathlib import Path
 from anndata import read_h5ad
-from vitessce import (
-    VitessceConfig,
-    Component as cm,
-    AnnDataWrapper,
-    OmeTiffWrapper,
-    MultiImageWrapper,
-)
 
 
-def main(inputs, output, image, anndata, masks=None):
+
+def main(
+    adata,
+    output,
+    gating_workflow,
+    gating_workflow_ext,
+    manual_gate=None,
+    manual_gate_ext=None
+):
     """
     Parameter
     ---------
-    inputs : str
-        File path to galaxy tool parameter.
+    adata : str
+        File path to the input AnnData.
     output : str
-        Output folder for saving web content.
-    image : str
-        File path to the OME Tiff image.
-    anndata : str
-        File path to anndata containing phenotyping info.
-    masks : str
-        File path to the image masks.
+        File path to the output AnnData.
+    gating_workflow : str
+        File path to the gating workflow.
+    gating_workflow_ext : str
+        Datatype for gating workflow, either 'csv' or 'tabular'.
+    manual_gate : str
+        File path to the munual gating.
+    manual_gate_ext : str
+        Datatype for munual gate, either 'csv' or 'tabular'.
     """
     warnings.simplefilter('ignore')
 
-    with open(inputs, 'r') as param_handler:
-        params = json.load(param_handler)
+    adata = read_h5ad(adata)
+    # Rescale data
+    if manual_gate:
+        sep = ',' if manual_gate_ext == 'csv' else '\t'
+        manual_gate = pd.read_csv(manual_gate, sep=sep)
 
-    adata = read_h5ad(anndata)
-    adata.obsm['XY_centroid'] = adata.obs[['X_centroid', 'Y_centroid']].values
-    vc = VitessceConfig(
-        name=(params['name'] or None),
-        description=(params['description'] or None)
-    )
-    dataset = vc.add_dataset()
-    image_wrappers=[OmeTiffWrapper(img_path=image, name='OMETIFF')]
-    if masks:
-        image_wrappers.append(
-            OmeTiffWrapper(img_path=masks, name='OMETIFF')
-        )
-    dataset.add_object(MultiImageWrapper(image_wrappers))
-    cell_set_obs = params['phenotyping']
-    if not isinstance(cell_set_obs, list):
-        cell_set_obs = cell_set_obs.split(',')
-    cell_set_obs_names = [obj[0].upper() + obj[1:] for obj in cell_set_obs]
-    print(cell_set_obs)
-    print(cell_set_obs_names)
-    dataset.add_object(
-        AnnDataWrapper(
-            adata,
-            mappings_obsm=["X_umap"],
-            mappings_obsm_names=["UMAP"],
-            spatial_centroid_obsm='XY_centroid',
-            cell_set_obs=cell_set_obs,
-            cell_set_obs_names=cell_set_obs_names,
-            expression_matrix="X"
-        )
-    )
-    spatial = vc.add_view(dataset, cm.SPATIAL)
-    cellsets = vc.add_view(dataset, cm.CELL_SETS)
-    scattorplot = vc.add_view(dataset, cm.SCATTERPLOT, mapping="UMAP")
-    status = vc.add_view(dataset, cm.STATUS)
-    lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
-    vc.layout(spatial | (lc / cellsets / scattorplot ));
-    config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
+    adata = sm.pp.rescale (adata, gate=manual_gate)
 
-    with open(Path(output).joinpath('config.json'), 'w') as f:
-        json.dump(config_dict, f, indent=4)
+    # Phenotype cells
+    # Load the gating workflow
+    sep = ',' if gating_workflow_ext == 'csv' else '\t'
+    phenotype = pd.read_csv(gating_workflow, sep=sep)
+    adata = sm.tl.phenotype_cells (adata, phenotype=phenotype, label="phenotype")
+
+    # Summary of the phenotyping
+    print(adata.obs['phenotype'].value_counts())
+
+    adata.write(output)
 
 
 if __name__ == '__main__':
     aparser = argparse.ArgumentParser()
-    aparser.add_argument("-i", "--inputs", dest="inputs", required=True)
-    aparser.add_argument("-e", "--output", dest="output", required=True)
-    aparser.add_argument("-g", "--image", dest="image", required=True)
-    aparser.add_argument("-a", "--anndata", dest="anndata", required=True)
-    aparser.add_argument("-m", "--masks", dest="masks", required=False)
+    aparser.add_argument("-a", "--adata", dest="adata", required=True)
+    aparser.add_argument("-o", "--output", dest="output", required=True)
+    aparser.add_argument("-g", "--gating_workflow", dest="gating_workflow", required=True)
+    aparser.add_argument("-s", "--gating_workflow_ext", dest="gating_workflow_ext", required=True)
+    aparser.add_argument("-m", "--manual_gate", dest="manual_gate", required=False)
+    aparser.add_argument("-S", "--manual_gate_ext", dest="manual_gate_ext", required=False)
 
     args = aparser.parse_args()
 
-    main(args.inputs, args.output, args.image, args.anndata, args.masks)
+    main(args.adata, args.output, args.gating_workflow,
+         args.gating_workflow_ext, args.manual_gate,
+         args.manual_gate_ext)
