@@ -15,6 +15,7 @@ def main(
     gating_workflow_ext,
     manual_gate=None,
     manual_gate_ext=None
+    rescale_plots=False
 ):
     """
     Parameter
@@ -31,6 +32,8 @@ def main(
         File path to the munual gating.
     manual_gate_ext : str
         Datatype for munual gate, either 'csv' or 'tabular'.
+    rescale_plots : boolean
+        Save plots from rescaling.
     """
     warnings.simplefilter('ignore')
 
@@ -40,7 +43,7 @@ def main(
         sep = ',' if manual_gate_ext == 'csv' else '\t'
         manual_gate = pd.read_csv(manual_gate, sep=sep)
 
-    adata = sm.pp.rescale (adata, gate=manual_gate)
+    adata = sm.pp.rescale (adata, gate=manual_gate, save_fig=rescale_plots)
 
     # Phenotype cells
     # Load the gating workflow
@@ -62,9 +65,10 @@ if __name__ == '__main__':
     aparser.add_argument("-s", "--gating_workflow_ext", dest="gating_workflow_ext", required=True)
     aparser.add_argument("-m", "--manual_gate", dest="manual_gate", required=False)
     aparser.add_argument("-S", "--manual_gate_ext", dest="manual_gate_ext", required=False)
+    aparser.add_argument("-p", "--rescale_plots", dest="rescale_plots", action="store_true", default=False, required=False)
 
     args = aparser.parse_args()
 
     main(args.adata, args.output, args.gating_workflow,
          args.gating_workflow_ext, args.manual_gate,
-         args.manual_gate_ext)
+         args.manual_gate_ext, args.rescale_plots)
