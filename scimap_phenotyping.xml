@@ -32,14 +32,14 @@
         <param name="manual_gate" type="data" format="tabular,csv" optional="true" label="Select the dataset containing manual gate information" help="First column as markers and second column as the gate values in log1p scale. If a marker is not included, auto gating
         based on gaussian mixture modeling will be executed. Optional."/>
         <param name="gating_workflow" type="data" format="tabular,csv" label="Select the dataset containing gating workflow" />
-        <param name="rescale_plots" type="boolean" checked="False" label="If True, the gates identified by the GMM method will be saved"/>
+        <param name="rescale_plots" type="boolean" checked="False" label="Save the GMM gates plots If True"/>
     </inputs>
     <outputs>
         <data format="h5ad" name="output" />
-        <data name="GMM-plots"> 
+	<collection name="gmm-plots" type="list" label="${tool.name}: GMM-plots"> 
             <filter>rescale_plots</filter>
-            <discover_datasets pattern="__designation_and_ext__" directory="auto_gating" format="png"/>
-        </data>
+            <discover_datasets pattern="__designation_and_ext__" directory="auto_gating" ext="png"/>
+        </collection>
     </outputs>
     <tests>
         <test>

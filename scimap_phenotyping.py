@@ -14,7 +14,7 @@ def main(
     gating_workflow,
     gating_workflow_ext,
     manual_gate=None,
-    manual_gate_ext=None
+    manual_gate_ext=None,
     rescale_plots=False
 ):
     """
