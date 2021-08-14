@@ -3,10 +3,13 @@
     <macros>
         <import>main_macros.xml</import>
     </macros>
-    <expand macro="python_requirements">
+    <!-- <expand macro="python_requirements"> -->
         <!-- <requirement type="package" version="0.1.0a11">vitessce</requirement> -->
         <!-- <requirement type="package" version="6.6.0">bftools</requirement> -->
-    </expand>
+    <!-- </expand> -->
+    <requirements>
+        <container type="docker">vitessce:latest</container>
+    </requirements>
     <expand macro="macro_stdio" />
     <version_command>echo "@VERSION@"</version_command>
     <command>
@@ -49,6 +52,7 @@
     </outputs>
     <tests>
         <test>
+            
         </test>
     </tests>
     <help>
