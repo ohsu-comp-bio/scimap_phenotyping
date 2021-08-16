@@ -6,4 +6,8 @@ RUN apt-get update && \
 RUN apt-get install -y curl git openjdk-8-jdk python3 python3-pip unzip wget && \
     ln -s /usr/bin/python3 /usr/bin/python
 
-RUN pip install scimap==0.15.1
+RUN wget https://downloads.openmicroscopy.org/bio-formats/6.6.1/artifacts/bftools.zip && \
+    unzip bftools.zip && \
+    cp bftools/* /usr/local/bin/
+
+RUN pip install vitessce==0.1.0a11

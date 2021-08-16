@@ -3,10 +3,16 @@
 
     <token name="@PROFILE@">20.01</token>
 
-    <xml name="python_requirements">
+    <xml name="scimap_requirements">
         <requirements>
-            <requirement type="package" version="0.15.1">scimap</requirement>
+            <container type="docker">quay.io/goeckslab/scimap:0.15.1</container>
             <yield />
+        </requirements>
+    </xml>
+
+    <xml name="vitessce_requirements">
+        <requirements>
+            <container type="docker">quay.io/goeckslab/vitessce:0.1.0a11</container>
         </requirements>
     </xml>
 
