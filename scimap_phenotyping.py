@@ -13,8 +13,8 @@ def main(
     output,
     gating_workflow,
     gating_workflow_ext,
-    manual_gate=None,
-    manual_gate_ext=None,
+    manual_gates=None,
+    manual_gates_ext=None,
     rescale_plots=False
 ):
     """
@@ -28,9 +28,9 @@ def main(
         File path to the gating workflow.
     gating_workflow_ext : str
         Datatype for gating workflow, either 'csv' or 'tabular'.
-    manual_gate : str
+    manual_gates : str
         File path to the munual gating.
-    manual_gate_ext : str
+    manual_gates_ext : str
         Datatype for munual gate, either 'csv' or 'tabular'.
     rescale_plots : boolean
         Save plots from rescaling.
@@ -39,11 +39,11 @@ def main(
 
     adata = read_h5ad(adata)
     # Rescale data
-    if manual_gate:
-        sep = ',' if manual_gate_ext == 'csv' else '\t'
-        manual_gate = pd.read_csv(manual_gate, sep=sep)
+    if manual_gates:
+        sep = ',' if manual_gates_ext == 'csv' else '\t'
+        manual_gates = pd.read_csv(manual_gates, sep=sep)
 
-    adata = sm.pp.rescale (adata, gate=manual_gate, save_fig=rescale_plots)
+    adata = sm.pp.rescale (adata, gate=manual_gates, save_fig=rescale_plots)
 
     # Phenotype cells
     # Load the gating workflow
@@ -63,12 +63,12 @@ if __name__ == '__main__':
     aparser.add_argument("-o", "--output", dest="output", required=True)
     aparser.add_argument("-g", "--gating_workflow", dest="gating_workflow", required=True)
     aparser.add_argument("-s", "--gating_workflow_ext", dest="gating_workflow_ext", required=True)
-    aparser.add_argument("-m", "--manual_gate", dest="manual_gate", required=False)
-    aparser.add_argument("-S", "--manual_gate_ext", dest="manual_gate_ext", required=False)
+    aparser.add_argument("-m", "--manual_gates", dest="manual_gates", required=False)
+    aparser.add_argument("-S", "--manual_gates_ext", dest="manual_gates_ext", required=False)
     aparser.add_argument("-p", "--rescale_plots", dest="rescale_plots", action="store_true", default=False, required=False)
 
     args = aparser.parse_args()
 
     main(args.adata, args.output, args.gating_workflow,
-         args.gating_workflow_ext, args.manual_gate,
-         args.manual_gate_ext, args.rescale_plots)
+         args.gating_workflow_ext, args.manual_gates,
+         args.manual_gates_ext, args.rescale_plots)
