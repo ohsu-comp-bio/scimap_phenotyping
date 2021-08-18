@@ -1,0 +1,78 @@
+<tool id="scimap_spatial" name="Spatial Analysis Tools" version="@VERSION@" profile="20.01">
+    <description>from Scimap</description>
+    <macros>
+        <import>main_macros.xml</import>
+    </macros>
+
+    <expand macro="scimap_requirements"/>
+    <expand macro="macro_stdio" />
+    <version_command>echo "@VERSION@"</version_command>
+    <command>
+        <![CDATA[
+        python '$__tool_directory__/scimap_spatial.py'
+            --adata '$anndata'
+
+            --output '$output'
+
+        ]]>
+    </command>
+    <configfiles>
+        <inputs name="inputs" />
+    </configfiles>
+    <inputs>
+        <param name="anndata" type="data" format="h5ad" label="Select the input anndata" />
+        <conditional name="analyses">
+            <param name="selected_tool" type="select" label="Select an analysis">
+                <option value="cluster">Cluster</option>
+                <option value="spatial_count" selected="true">Spatial Count</option>
+                <option value="spatial_expression">Spatial Expression</option>
+                <option value="spatial_aggregate">Spatial Aggregate</option>
+                <option value="spatial_distance">Spatial Distance</option>
+                <option value="spatial_interaction">Spatial Interaction</option>
+                <option value="spatial_lda">Spatial LDA</option>
+                <option value="spatial_pscore">Spatial pscore</option>
+            </param>
+        </conditional>
+        <when value="cluster">
+        </when>
+        <when value="spatial_count">
+        </when>
+        <when value="spatial_expression">
+        </when>
+        <when value="spatial_aggregate">
+        </when>
+        <when value="spatial_distance">
+        </when>
+        <when value="spatial_interaction">
+        </when>
+        <when value="spatial_lda">
+        </when>
+        <when value="spatial_pscore">
+        </when>
+    </inputs>
+    <outputs>
+        <data format="h5ad" name="output" />
+    <tests>
+        <test>
+            
+    </tests>
+    <help>
+        <![CDATA[
+**What it does**
+
+This tool does single cell phenotyping via either manual gating or auto gating (gaussian mixture modeling) using Scimap.
+
+**Input**
+
+AnnData.
+
+**Output**
+
+Anndata with "obs/phenotype" added.
+
+
+        ]]>
+    </help>
+    <citations>
+    </citations>
+</tool>
