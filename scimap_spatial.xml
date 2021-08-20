@@ -10,8 +10,8 @@
     <command>
         <![CDATA[
         python '$__tool_directory__/scimap_spatial.py'
-            --adata '$anndata'
-
+            --inputs '$inputs'
+            --anndata '$anndata'
             --output '$output'
 
         ]]>
@@ -24,13 +24,13 @@
         <conditional name="analyses">
             <param name="selected_tool" type="select" label="Select an analysis">
                 <option value="cluster">Cluster</option>
-                <option value="spatial_aggregate">Spatial Aggregate</option>
-                <option value="spatial_count" selected="true">Spatial Count</option>
-                <option value="spatial_distance">Spatial Distance</option>
-                <option value="spatial_expression">Spatial Expression</option>
-                <option value="spatial_interaction">Spatial Interaction</option>
-                <option value="spatial_lda">Spatial LDA</option>
-                <option value="spatial_pscore">Spatial pscore</option>
+                <option value="spatial_aggregate">Spatial Aggregate -- find regions of aggregration of similar cells</option>
+                <option value="spatial_count" selected="true">Spatial Count -- compute a neighbourhood matrix using any categorical variables (e.g. cell-types)</option>
+                <option value="spatial_distance">Spatial Distance -- calculate the average shortest between phenotypes or clusters of interest</option>
+                <option value="spatial_expression">Spatial Expression -- o compute a neighbourhood weighted matrix based on the expression values</option>
+                <option value="spatial_interaction">Spatial Interaction -- computes how likely celltypes are found next to each another compared to random background</option>
+                <option value="spatial_lda">Spatial LDA -- compute a neighbourhood matrix using any categorical variable and then perform Latent Dirichlet Allocation (LDA) modelling</option>
+                <option value="spatial_pscore">Spatial pscore -- a scoring system to evaluate user defined proximity between cell types</option>
             </param>
             <when value="cluster">
                 <param name="method" type="select" label="Select the clustering method">
