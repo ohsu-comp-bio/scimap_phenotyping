@@ -24,12 +24,12 @@ def main(inputs, anndata, output):
 
     adata = read_h5ad(anndata)
 
-    method = params['selected_tool']
+    method = params['analyses']['selected_tool']
     method_func = getattr(sm.tl, method)
 
     options = params['analyses']['options']
     if method == 'cluster':
-        options['method'] = 'cluster'
+        options['method'] = params['analyses']['method']
         subset_genes = options.pop('subset_genes')
         if subset_genes:
             options['subset_genes'] = \
