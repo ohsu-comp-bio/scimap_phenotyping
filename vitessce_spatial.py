@@ -66,7 +66,10 @@ def main(inputs, output, image, anndata, masks=None):
     scattorplot = vc.add_view(dataset, cm.SCATTERPLOT, mapping="UMAP")
     status = vc.add_view(dataset, cm.STATUS)
     lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
-    vc.layout(spatial | lc | (status / cellsets / scattorplot ))
+    heatmap = vc.add_view(dataset, cm.HEATMAP)
+    genes = vc.add_view(dataset, cm.GENES)
+    cell_set_expression = vc.add_view(dataset, cm.CELL_SET_EXPRESSION)
+    vc.layout((status / genes / cell_set_expression) | (cellsets / lc / scattorplot ) | (heatmap / spatial ))
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:
