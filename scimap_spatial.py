@@ -24,26 +24,26 @@ def main(inputs, anndata, output):
 
     adata = read_h5ad(anndata)
 
-    method = params['analyses']['selected_tool']
-    method_func = getattr(sm.tl, method)
+    tool = params['analyses']['selected_tool']
+    tool_func = getattr(sm.tl, tool)
 
     options = params['analyses']['options']
-    if method == 'cluster':
+    if tool == 'cluster':
         options['method'] = params['analyses']['method']
         subset_genes = options.pop('subset_genes')
         if subset_genes:
             options['subset_genes'] = \
-                list(map(lambda x: x.strip(), subset_genes.split(',')))
+                [x.strip() for x in subset_genes.split(',')]
         sub_cluster_group = options.pop('sub_cluster_group')
         if sub_cluster_group:
             options['sub_cluster_group'] = \
-                list(map(lambda x: x.strip(), sub_cluster_group.split(',')))
+                [x.strip() for x in sub_cluster_group.split(',')]
 
     for k, v in options.items():
         if v == '':
             options[k] = None
     
-    method_func(adata, **options)
+    tool_func(adata, **options)
 
     adata.write(output)
 
