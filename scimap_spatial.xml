@@ -165,7 +165,7 @@
         </conditional>
     </inputs>
     <outputs>
-        <data format="h5ad" name="output" />
+        <data format="h5ad" name="output" label="Scimap.tools.${analyses.selected_tool} on ${on_string}" />
     </outputs>
     <tests>
         <test>
