@@ -1,0 +1,84 @@
+<tool id="spuidpy_spatial" name="Squidpy Tools" version="@VERSION@" profile="20.01">
+    <description>for spatial analysis </description>
+    <macros>
+        <import>main_macros.xml</import>
+    </macros>
+
+    <expand macro="squidpy_requirements"/>
+    <expand macro="macro_stdio" />
+    <version_command>echo "@VERSION@"</version_command>
+    <command>
+        <![CDATA[
+        python '$__tool_directory__/squidpy_spatial.py'
+            --inputs '$inputs'
+            --anndata '$anndata'
+            --output '$output'
+
+        ]]>
+    </command>
+    <configfiles>
+        <inputs name="inputs" />
+    </configfiles>
+    <inputs>
+        <param name="anndata" type="data" format="h5ad" label="Select the input anndata" />
+        <conditional name="analyses">
+            <param name="selected_tool" type="select" label="Select an analysis">
+                <option value="spatial_neighbors" selected="true">Spatial neighbors</option>
+                <option value="nhood_enrichment">nhood_enrichment</option>
+                <option value="co_occurrence" >co_occurrence</option>
+                <option value="centrality_scores">centrality_scores</option>
+                <option value="interaction_matrix">interaction_matrix</option>
+                <option value="ripley">ripley</option>
+                <option value="ligrec">ligrec</option>
+                <option value="spatial_autocorr">spatial_autocorr</option>
+                <option value="sepal">sepal</option>
+            </param>
+            <when value="spatial_neighbors">
+                <section name="options" title="Advanced Options" expanded="false">
+                </section>
+            </when>
+            <when value="nhood_enrichment">
+            </when>
+            <when value="co_occurrence">
+            </when>
+            <when value="centrality_scores">
+            </when>
+            <when value="interaction_matrix">
+            </when>
+            <when value="ripley">
+            </when>
+            <when value="ligrec">
+            </when>
+            <when value="spatial_autocorr">
+            </when>
+            <when value="sepal">
+            </when>
+        </conditional>
+    </inputs>
+    <outputs>
+        <data format="h5ad" name="output" />
+    </outputs>
+    <tests>
+        <test>
+        </test>
+    </tests>
+    <help>
+        <![CDATA[
+**What it does**
+
+This tool includes various of single cell spatial analysis utils provided by Squidpy.
+
+**Input**
+
+AnnData.
+
+**Output**
+
+Anndata
+
+
+        ]]>
+    </help>
+    <citations>
+    </citations>
+</tool>
