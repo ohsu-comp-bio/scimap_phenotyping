@@ -33,4 +33,17 @@
         </section>
     </xml>
 
+    <xml name="squidpy_requirements">
+        <requirements>
+            <container type="docker">quay.io/goeckslab/squidpy:1.1.0</container>
+        </requirements>
+    </xml>
+
+    <xml name="squidpy_spatial_options">
+        <section name="options" title="Advanced Options" expanded="false">
+            <yield/>
+             <!-- <param argument="copy" type="hidden" value="false" help="If True, return the result, otherwise save it to the adata object." /> -->
+        </section>
+    </xml>
+
 </macros>
