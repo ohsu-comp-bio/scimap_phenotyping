@@ -1,5 +1,5 @@
-<tool id="vitessce_spatial" name="Spatial Visualization" version="@VERSION@" profile="20.01">
-    <description> using Vitessce</description>
+<tool id="vitessce_spatial" name="Vitessce Visualization" version="@VERSION@" profile="20.01">
+    <description>displays various view components for single cell analysis</description>
     <macros>
         <import>main_macros.xml</import>
     </macros>
@@ -11,7 +11,7 @@
         <![CDATA[
         mkdir -p '${output.files_path}/A/0' &&
         ln -sf '$image' '${output.files_path}/A/0/image01.ome.tiff' &&
-        #if $masks and '${masks.ext}' == 'tiff'
+        #if $masks and $masks.ext == 'tiff'
             bfconvert -pyramid-resolutions 4 -pyramid-scale 2 '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
         #end if
         python '$__tool_directory__/vitessce_spatial.py'
@@ -37,17 +37,34 @@
         <param name="anndata" type="data" format="h5ad" label="Select the anndata contaning phenotyping info" />
         <param name="name" type="text" optional="true" value="dataset01" label="Input the dataset short name" />
         <param name="description" type="text" optional="true" value="Description of dataset01" label="Input the description of the dataset" />
-        <param name="phenotyping" type="select" multiple="true" display="checkboxes" label="Select the phenotyping keys" >
-            <option value="leiden">'leiden' (via clustering)</option>
-            <option value="phenotype" selected="true">'phenotype' (via scimap phenotyping)</option>
-        </param>
+        <conditional name="phenotype_factory">
+            <param name="phenotype_mode" type="select" label="Input phenotyping keys">
+                <option value="choices" selected="true">Multiple choices</option>
+                <option value="type_in">Type in</option>
+            </param>
+            <when value="choices">
+                <param name="phenotypes" type="select" multiple="true" display="checkboxes" label="Select the key(s)" >
+                    <option value="phenotype" selected="true">'phenotype' (via scimap phenotyping)</option>
+                    <option value="leiden">'leiden' (via clustering)</option>
+                </param>
+            </when>
+            <when value="type_in">
+                <param name="phenotypes" type="text" value="" label="Type in the keys storing phenotypes" help="Comma delimited for multiple keys."/>
+            </when>
+        </conditional>
     </inputs>
     <outputs>
         <data format="html" name="output" />
     </outputs>
     <tests>
         <test>
-            
+            <param name="image" value="reactive_core.ome.tiff" ftype="ome.tiff" />
+            <param name="anndata" value="tutorial_data_pheno.h5ad" ftype="h5ad" />
+            <conditional name="phenotype_factory">
+                <param name="phenotype_mode" value="type_in" />
+                <param name="phenotypes" value="leiden" />
+            </conditional>
+            <output name="output" file="tutorial_vitessce.html" compare="sim_size" delta="20" />
         </test>
     </tests>
     <help>

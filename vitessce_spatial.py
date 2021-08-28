@@ -46,9 +46,9 @@ def main(inputs, output, image, anndata, masks=None):
             OmeTiffWrapper(img_path=masks, name='MASKS', is_bitmask=True)
         )
     dataset.add_object(MultiImageWrapper(image_wrappers))
-    cell_set_obs = params['phenotyping']
+    cell_set_obs = params['phenotype_factory']['phenotypes']
     if not isinstance(cell_set_obs, list):
-        cell_set_obs = cell_set_obs.split(',')
+        cell_set_obs = [x.strip() for x in cell_set_obs.split(',')]
     cell_set_obs_names = [obj[0].upper() + obj[1:] for obj in cell_set_obs]
     dataset.add_object(
         AnnDataWrapper(
