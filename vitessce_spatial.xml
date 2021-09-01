@@ -45,7 +45,10 @@
             <when value="choices">
                 <param name="phenotypes" type="select" multiple="true" display="checkboxes" label="Select the key(s)" >
                     <option value="phenotype" selected="true">'phenotype' (via scimap phenotyping)</option>
+                    <option value="kmeans">'kmeans' (via clustering)</option>
                     <option value="leiden">'leiden' (via clustering)</option>
+                    <option value="phenograph">'phenograph' (via clustering)</option>
+                    <option value="parc">'parc' (via clustering)</option>
                 </param>
             </when>
             <when value="type_in">
