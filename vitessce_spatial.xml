@@ -48,14 +48,14 @@
                     <param argument="n_neighbors" type="integer" value="30" label="The size of local neighborhood used for manifold approximation" />
                     <param argument="n_pcs" type="integer" value="10" label="Number of PCs" />
                     <param argument="knn" type="boolean" checked="true" label="Whether to use knn graph" help="If false, use a Gaussian Kernel to assign low weights to neighbors more distant than the n_neighbors nearest neighbor." />
-                    <param argument="random_state" type="integer" value="" label="Randomness seed" />
+                    <param argument="random_state" type="integer" value="0" optional="true" label="Randomness seed" />
                 </section>
             </when>
             <when value="tsne">
                 <section name="options" title="Advance Options for computing tSNE">
                     <param argument="n_pcs" type="integer" value="10" label="Number of PCs" />
                     <param argument="learning_rate" type="float" value="1000" label="Learning rate" help="Should be 100-1000." />
-                    <param argument="random_state" type="integer" value="" label="Randomness seed" />
+                    <param argument="random_state" type="integer" value="0" optional="true" label="Randomness seed" />
                 </section>
             </when>
             <when value="pca">
@@ -68,7 +68,7 @@
                         <option value="auto">auto</option>
                         <option value="lobpcg">lobpcg</option>
                     </param>
-                    <param argument="random_state" type="integer" value="" label="Randomness seed" />
+                    <param argument="random_state" type="integer" value="0" optional="true" label="Randomness seed" />
                 </section>
             </when>
         </conditional>
