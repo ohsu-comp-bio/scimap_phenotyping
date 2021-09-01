@@ -2,6 +2,7 @@ import argparse
 import json
 import warnings
 
+import scanpy as sc
 from pathlib import Path
 from anndata import read_h5ad
 from vitessce import (
@@ -34,6 +35,23 @@ def main(inputs, output, image, anndata, masks=None):
         params = json.load(param_handler)
 
     adata = read_h5ad(anndata)
+
+    embedding = params['scatterplot_embeddings']['embedding']
+    embedding_options = params['scatterplot_embeddings']['options']
+    if embedding == 'umap':
+        sc.pp.neighbors(adata, **embedding_options)
+        sc.tl.umap(adata)
+        mappings_obsm = 'X_umap'
+        mappings_obsm_name = "UMAP"
+    elif embedding == 'tsne':
+        sc.tl.tsne(adata, **embedding_options)
+        mappings_obsm = 'X_tsne'
+        mappings_obsm_name = "tSNE"
+    else:         # pca
+        sc.tl.pca(adata, **embedding_options)
+        mappings_obsm = 'X_pca'
+        mappings_obsm_name = "PCA"
+
     adata.obsm['XY_centroid'] = adata.obs[['X_centroid', 'Y_centroid']].values
     vc = VitessceConfig(
         name=(params['name'] or None),
@@ -53,8 +71,8 @@ def main(inputs, output, image, anndata, masks=None):
     dataset.add_object(
         AnnDataWrapper(
             adata,
-            mappings_obsm=["X_umap"],
-            mappings_obsm_names=["UMAP"],
+            mappings_obsm=[mappings_obsm],
+            mappings_obsm_names=[mappings_obsm_name],
             spatial_centroid_obsm='XY_centroid',
             cell_set_obs=cell_set_obs,
             cell_set_obs_names=cell_set_obs_names,
@@ -63,7 +81,7 @@ def main(inputs, output, image, anndata, masks=None):
     )
     spatial = vc.add_view(dataset, cm.SPATIAL)
     cellsets = vc.add_view(dataset, cm.CELL_SETS)
-    scattorplot = vc.add_view(dataset, cm.SCATTERPLOT, mapping="UMAP")
+    scattorplot = vc.add_view(dataset, cm.SCATTERPLOT, mapping=mappings_obsm_name)
     status = vc.add_view(dataset, cm.STATUS)
     lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
     heatmap = vc.add_view(dataset, cm.HEATMAP)

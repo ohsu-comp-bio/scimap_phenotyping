@@ -37,6 +37,41 @@
         <param name="anndata" type="data" format="h5ad" label="Select the anndata contaning phenotyping info" />
         <param name="name" type="text" optional="true" value="dataset01" label="Input the dataset short name" />
         <param name="description" type="text" optional="true" value="Description of dataset01" label="Input the description of the dataset" />
+        <conditional name="scatterplot_embeddings">
+            <param name="embedding" type="select" label="Select an embedding algorithm for scatterplot">
+                <option value="umap" selected="true">UMAP</option>
+                <option value="tsne">tSNE</option>
+                <option value="pca">PCA</option>
+            </param>
+            <when value="umap">
+                <section name="options" title="Advance Options for neighbor search">
+                    <param argument="n_neighbors" type="integer" value="30" label="The size of local neighborhood used for manifold approximation" />
+                    <param argument="n_pcs" type="integer" value="10" label="Number of PCs" />
+                    <param argument="knn" type="boolean" checked="true" label="Whether to use knn graph" help="If false, use a Gaussian Kernel to assign low weights to neighbors more distant than the n_neighbors nearest neighbor." />
+                    <param argument="random_state" type="integer" value="" label="Randomness seed" />
+                </section>
+            </when>
+            <when value="tsne">
+                <section name="options" title="Advance Options for computing tSNE">
+                    <param argument="n_pcs" type="integer" value="10" label="Number of PCs" />
+                    <param argument="learning_rate" type="float" value="1000" label="Learning rate" help="Should be 100-1000." />
+                    <param argument="random_state" type="integer" value="" label="Randomness seed" />
+                </section>
+            </when>
+            <when value="pca">
+                <section name="options" title="Advance Options for computing PCA">
+                    <param argument="n_comps" type="integer" value="50" label="Number of principal components to compute" />
+                    <param argument="zero_center" type="boolean" checked="true" label="Whether to compute standard PCA from covariance matrix" help="If False, omit zero-centering variables (uses TruncatedSVD)" />
+                    <param argument="svd_solver" type="select" label="Select the SVD solver">
+                        <option value="arpack" selected="true">arpack</option>
+                        <option value="randomized">randomized</option>
+                        <option value="auto">auto</option>
+                        <option value="lobpcg">lobpcg</option>
+                    </param>
+                    <param argument="random_state" type="integer" value="" label="Randomness seed" />
+                </section>
+            </when>
+        </conditional>
         <conditional name="phenotype_factory">
             <param name="phenotype_mode" type="select" label="Input phenotyping keys">
                 <option value="choices" selected="true">Multiple choices</option>
