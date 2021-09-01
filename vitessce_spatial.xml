@@ -60,7 +60,7 @@
             </when>
             <when value="pca">
                 <section name="options" title="Advance Options for computing PCA">
-                    <param argument="n_comps" type="integer" value="50" label="Number of principal components to compute" />
+                    <param argument="n_comps" type="integer" value="" optional="true" label="Number of principal components to compute" help="Defaults to 50, or 1 - minimum dimension size of selected representation." />
                     <param argument="zero_center" type="boolean" checked="true" label="Whether to compute standard PCA from covariance matrix" help="If False, omit zero-centering variables (uses TruncatedSVD)" />
                     <param argument="svd_solver" type="select" label="Select the SVD solver">
                         <option value="arpack" selected="true">arpack</option>
