@@ -51,12 +51,12 @@
                         <option value="cosine">cosine</option>
                     </param>
                     <param argument="set_diag" type="boolean" checked="false" label="Whether to set the diagonal of the spatial connectivities to 1.0" />
-                    <param argument="key_added" type="text" value="spatial_neighbors" label="The column name used in anndata to store the returned data" />
+                    <param argument="key_added" type="text" value="spatial" label="The column name used in anndata to store the returned data" />
                 </expand>
             </when>
             <when value="nhood_enrichment">
+                <param argument="cluster_key" type="text" value="nhood_enrichment" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                 <expand macro="squidpy_spatial_options">
-                    <param argument="cluster_key" type="text" value="nhood_enrichment" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                     <param argument="connectivity_key" type="text" value="" optional="true" label="Key in anndata.AnnData.obsp where spatial connectivities are stored" />
                     <param argument="n_perms" type="integer" value="1000" label="Number of permutations for the permutation test" />
                     <param argument="numba_parallel" type="select" label="Whether to use numba.prange or not">
@@ -68,16 +68,16 @@
                 </expand>
             </when>
             <when value="co_occurrence">
+                <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                 <expand macro="squidpy_spatial_options">
-                    <param argument="cluster_key" type="text" value="co_occurrence" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                     <param argument="spatial_key" type="text" value="spatial" optional="false" label="The Key where spatial coordinates are stored" help="Key in `anndata.AnnData.obsm`." />
                     <param argument="n_steps" type="integer" value="50" label="Number of distance thresholds at which co-occurrence is computed" />
-                    <param argument="n_splits" type="integer" value="" label="Number of splits in which to divide the spatial coordinates" help="In anndata.AnnData.obsm ['{spatial_key}']." />
+                    <param argument="n_splits" type="integer" value="" optional="true" label="Number of splits in which to divide the spatial coordinates" help="In anndata.AnnData.obsm ['{spatial_key}']." />
                 </expand>
             </when>
             <when value="centrality_scores">
+                <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                 <expand macro="squidpy_spatial_options">
-                    <param argument="cluster_key" type="text" value="centrality_scores" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                     <param argument="score" type="select" label="Centrality measures as described in networkx.algorithms.centrality" help="Refer to [Hagberg et al., 2008]." >
                         <option value="none" selected="true">None</option>
                         <option value="closeness_centrality">closeness_centrality -- measure of how close the group is to other nodes</option>
@@ -88,16 +88,16 @@
                 </expand>
             </when>
             <when value="interaction_matrix">
+                <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                 <expand macro="squidpy_spatial_options">
-                    <param argument="cluster_key" type="text" value="interaction_matrix" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                     <param argument="connectivity_key" type="text" value="" optional="true" label="Key in anndata.AnnData.obsp where spatial connectivities are stored" />
                     <param argument="normalized" type="boolean" checked="false" label="Whether to normalize the sum of each row to 1" />
                     <param argument="weights" type="boolean" checked="false" label="Whether to use edge weights or binarize" />
                 </expand>
             </when>
             <when value="ripley">
+                <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                 <expand macro="squidpy_spatial_options">
-                    <param argument="cluster_key" type="text" value="interaction_matrix" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                     <param argument="mode" type="select" label="Which Ripley’s statistic to compute">
                         <option value="F" selected="true">F</option>
                         <option value="G">G</option>
@@ -126,8 +126,8 @@
                 </expand>
             </when>
             <when value="ligrec">
+                <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                 <expand macro="squidpy_spatial_options">
-                    <param argument="cluster_key" type="text" value="interaction_matrix" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                     <param argument="use_raw" type="boolean" checked="true" label="Whether to access anndata.AnnData.raw" />
                     <param argument="interactions" type="data" format="tabular" optional="true" label="Select the dataset containing interaction to test" help="Must contain at least 2 columns named ‘source’ and ‘target’. Can be null, a condition under which the interactions are extracted from omnipath." />
                     <param argument="complex_policy" type="select" label="Policy on how to handle complexes">

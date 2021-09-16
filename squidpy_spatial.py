@@ -51,7 +51,11 @@ def main(inputs, anndata, output):
         if v in ['', 'none']:
             options[k] = None
 
-    tool_func(adata, **options)
+    cluster_key = params['analyses'].get('cluster_key')
+    if cluster_key:
+        tool_func(adata, cluster_key, **options)
+    else:
+        tool_func(adata, **options)
 
     adata.write(output)
 
