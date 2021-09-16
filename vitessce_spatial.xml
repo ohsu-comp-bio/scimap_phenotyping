@@ -104,6 +104,18 @@
             </conditional>
             <output name="output" file="tutorial_vitessce.html" compare="sim_size" delta="20" />
         </test>
+        <test>
+            <param name="image" value="reactive_core.ome.tiff" ftype="ome.tiff" />
+            <param name="anndata" value="tutorial_data_pheno.h5ad" ftype="h5ad" />
+            <conditional name="scatterplot_embeddings">
+                <param name="embedding" value="pca" />
+            </conditional>
+            <conditional name="phenotype_factory">
+                <param name="phenotype_mode" value="type_in" />
+                <param name="phenotypes" value="leiden" />
+            </conditional>
+            <output name="output" file="tutorial_vitessce.html" compare="sim_size" delta="20" />
+        </test>
     </tests>
     <help>
         <![CDATA[
