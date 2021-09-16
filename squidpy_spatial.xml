@@ -1,4 +1,4 @@
-<tool id="spuidpy_spatial" name="Squidpy Tools" version="@VERSION@" profile="20.01">
+<tool id="spuidpy_spatial" name="Squidpy Graph Tools" version="@VERSION@" profile="20.01">
     <description>for spatial analysis </description>
     <macros>
         <import>main_macros.xml</import>
@@ -134,7 +134,7 @@
                         <option value="min" selected="true">min -- select gene with the minimum average expression</option>
                         <option value="all">all --  select all possible combinations between ‘source’ and ‘target’ complexes</option>
                     </param>
-                    <param argument="n_perms" type="integer" value="" label="Number of permutations for the permutation test." />
+                    <param argument="n_perms" type="integer" value="" optional="true" label="Number of permutations for the permutation test." />
                     <param argument="threshold" type="float" value="0.01" label="Do not perform permutation test if any of the interacting components is being expressed in less than threshold percent of cells within a given cluster" />
                     <param argument="corr_method" type="select" label="Correction method for multiple testing">
                         <option value="none" selected="true">None</option>
@@ -172,7 +172,7 @@
                         <option value="geary">geary</option>
                     </param>
                     <param argument="transformation" type="boolean" checked="true" label="Whether to perform row-normalization on weights in anndata.AnnData.obsp ['spatial_connectivities']" />
-                    <param argument="n_perms" type="integer" value="" label="Number of permutations for the permutation test." help="If None, only p-values under normality assumption are computed"/>
+                    <param argument="n_perms" type="integer" value="" optional="true" label="Number of permutations for the permutation test." help="If None, only p-values under normality assumption are computed"/>
                     <param argument="two_tailed" type="boolean" checked="false" label="Are the p-values two-tailed?" help="One-tailed, if False." />
                     <param argument="corr_method" type="select" label="Correction method for multiple testing">
                         <option value="none" selected="true">None</option>
@@ -188,7 +188,7 @@
                         <option value="fdr_tsbky">fdr_tsbky</option>
                     </param>
                     <param argument="layer" type="text" value="" optional="true" label="Layer in anndata.AnnData.layers to use" help="If None, use anndata.AnnData.X." />
-                    <param argument="seed" type="integer" value="" label="Randomness seed" />
+                    <param argument="seed" type="integer" value="" optional="true" label="Randomness seed" />
                 </expand>
             </when>
             <when value="sepal">
@@ -198,7 +198,7 @@
                         <option value="6">6 -- for a hexagonal-grid (Visium)</option>
                     </param>
                     <param argument="genes" type="text" value="" optional="true" label="List of gene names, as stored in anndata.AnnData.var_names" help="Comma delitimited.  Used to compute global spatial autocorrelation statistic. If None, it’s computed anndata.AnnData.var ['highly_variable']." />
-                    <param argument="n_iter" type="integer" value="30000" label="Maximum number of iterations for the diffusion simulation" />
+                    <param argument="n_iter" type="integer" value="30000" optional="true" label="Maximum number of iterations for the diffusion simulation" />
                     <param argument="dt" type="float" value="0.001" label="Time step in diffusion simulation" />
                     <param argument="thresh" type="float" value="1e-8" label="Entropy threshold for convergence of diffusion simulation" />
                     <param argument="spatial_key" type="text" value="spatial" optional="false" label="The Key where spatial coordinates are stored" help="Key in `anndata.AnnData.obsm`." />
