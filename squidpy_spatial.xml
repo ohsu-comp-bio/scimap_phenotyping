@@ -210,7 +210,7 @@
         </conditional>
     </inputs>
     <outputs>
-        <data format="h5ad" name="output" />
+        <data format="h5ad" name="output" label="Squidpy.graph.${analyses.selected_tool} on ${on_string}" />
     </outputs>
     <tests>
         <test>
