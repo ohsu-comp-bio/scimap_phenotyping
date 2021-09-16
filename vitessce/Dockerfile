@@ -10,4 +10,4 @@ RUN wget https://downloads.openmicroscopy.org/bio-formats/6.6.1/artifacts/bftool
     unzip bftools.zip && \
     cp bftools/* /usr/local/bin/
 
-RUN pip install vitessce==0.1.0a11 anndata argparse
+RUN pip install vitessce==0.1.0a11 anndata argparse scanpy numpy==1.20
