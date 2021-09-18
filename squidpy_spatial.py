@@ -26,6 +26,12 @@ def main(inputs, anndata, output):
 
     adata = read_h5ad(anndata)
 
+    if 'spatial' not in adata.obsm:
+        try:
+            adata.obsm['spatial'] = adata.obs[['X_centroid', 'Y_centroid']].values
+        except Exception as e:
+            print(e)
+
     tool = params['analyses']['selected_tool']
     tool_func = getattr(sq.gr, tool)
 
