@@ -2,6 +2,7 @@ import argparse
 import ast
 import json
 import warnings
+from pathlib import Path
 
 import pandas as pd
 import squidpy as sq
@@ -68,6 +69,7 @@ def main(inputs, anndata, output, output_plot):
         tool_func(adata, **options)
 
     if output_plot:
+        output_path= Path(output_plot).parent.joinpath('image.png')
         plotting_options = params['analyses']['plotting_options']
         for k, v in plotting_options.items():
             if not isinstance(v, str):
@@ -91,9 +93,9 @@ def main(inputs, anndata, output, output_plot):
 
         plotting_func = getattr(sq.pl, tool)
         if cluster_key:
-            plotting_func(adata, cluster_key, save=output_plot, **plotting_options)
+            plotting_func(adata, cluster_key, save=output_path, **plotting_options)
         else:       # TODO Remove this, since all plottings need cluster key
-            plotting_func(adata, save=output_plot, **plotting_options)
+            plotting_func(adata, save=output_path, **plotting_options)
 
     adata.write(output)
 

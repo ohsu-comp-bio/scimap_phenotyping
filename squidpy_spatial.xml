@@ -250,12 +250,22 @@
     </inputs>
     <outputs>
         <data format="h5ad" name="output" label="Squidpy.gr.${analyses.selected_tool} on ${on_string}" />
-        <data format="png" name="output_plot" label="Squidpy.pl.${analyses.selected_tool} on ${on_string}" >
+        <data from_work_dir="image.png" name="output_plot" label="Squidpy.pl.${analyses.selected_tool} on ${on_string}" >
             <filter>analyses['selected_tool'] in ['nhood_enrichment', 'centrality_scores', 'interaction_matrix', 'ligrec', 'ripley', 'co_occurrence']</filter>
         </data>
     </outputs>
     <tests>
         <test>
+            <param name="anndata" value="imc.h5ad" ftype="h5ad" />
+            <param name="selected_tool" value="spatial_neighbors" />
+            <output name="output" file="imc_sn.h5ad" compare="sim_size" delta="20" />
+        </test>
+        <test>
+            <param name="anndata" value="imc_sn.h5ad" ftype="h5ad" />
+            <param name="selected_tool" value="co_occurrence" />
+            <param name="cluster_key" value="cell type" />
+            <output name="output" file="imc_sn.h5ad" compare="sim_size" delta="20" />
+            <output name="output_plot" file="imc_co_occurrence.png" compare="sim_size" delta="20" />
         </test>
     </tests>
     <help>
