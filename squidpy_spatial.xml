@@ -14,7 +14,7 @@
             --anndata '$anndata'
             --output '$output'
             #if $analyses.selected_tool in ['nhood_enrichment', 'centrality_scores', 'interaction_matrix', 'ligrec', 'ripley', 'co_occurrence']:
-            --output_plot '$output_plot'
+            --output_plot "`pwd`/image.png"
             #end if
 
         ]]>
