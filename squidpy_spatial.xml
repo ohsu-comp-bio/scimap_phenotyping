@@ -1,4 +1,4 @@
-<tool id="spuidpy_spatial" name="Squidpy Graph Tools" version="@VERSION@" profile="20.01">
+<tool id="spuidpy_spatial" name="Squidpy Graph and Plotting" version="@VERSION@" profile="20.01">
     <description>for spatial analysis </description>
     <macros>
         <import>main_macros.xml</import>
@@ -55,7 +55,7 @@
                 </expand>
             </when>
             <when value="nhood_enrichment">
-                <param argument="cluster_key" type="text" value="nhood_enrichment" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
+                <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
                 <expand macro="squidpy_spatial_options">
                     <param argument="connectivity_key" type="text" value="" optional="true" label="Key in anndata.AnnData.obsp where spatial connectivities are stored" />
                     <param argument="n_perms" type="integer" value="1000" label="Number of permutations for the permutation test" />
@@ -66,6 +66,12 @@
                     </param>
                     <param argument="seed" type="integer" value="" optional="true" label="Randomness seed" />
                 </expand>
+                <expand macro="squidpy_plotting_options_more">
+                    <param argument="mode" type="select" label="Choose one result from gr.nhood_enrichment to plot">
+                        <option value="zscore" selected="true">zscore</option>
+                        <option value="count">count</option>
+                    </param>
+                </expand>
             </when>
             <when value="co_occurrence">
                 <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
@@ -73,6 +79,9 @@
                     <param argument="spatial_key" type="text" value="spatial" optional="false" label="The Key where spatial coordinates are stored" help="Key in `anndata.AnnData.obsm`." />
                     <param argument="n_steps" type="integer" value="50" label="Number of distance thresholds at which co-occurrence is computed" />
                     <param argument="n_splits" type="integer" value="" optional="true" label="Number of splits in which to divide the spatial coordinates" help="In anndata.AnnData.obsm ['{spatial_key}']." />
+                </expand>
+                <expand macro="squidpy_plotting_options">
+                    <expand macro="squidpy_plotting_option_palette" />
                 </expand>
             </when>
             <when value="centrality_scores">
@@ -86,6 +95,10 @@
                     </param>
                     <param argument="connectivity_key" type="text" value="" optional="true" label="Key in anndata.AnnData.obsp where spatial connectivities are stored" />
                 </expand>
+                <expand macro="squidpy_plotting_options">
+                    <param argument="score" type="text" value="" optional="true" label="The scores to plot" help="Comma delimited for multiple. If None, plot all scores." />
+                    <expand macro="squidpy_plotting_option_palette" />
+                </expand>
             </when>
             <when value="interaction_matrix">
                 <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
@@ -94,6 +107,7 @@
                     <param argument="normalized" type="boolean" checked="false" label="Whether to normalize the sum of each row to 1" />
                     <param argument="weights" type="boolean" checked="false" label="Whether to use edge weights or binarize" />
                 </expand>
+                <expand macro="squidpy_plotting_options_more"/>
             </when>
             <when value="ripley">
                 <param argument="cluster_key" type="text" value="" optional="false" label="Key in anndata.AnnData.obs where clustering is stored" />
@@ -123,6 +137,15 @@
                     <param argument="max_dist" type="float" value="" optional="true" label="Maximum distances for the support" help="If None, max_dist is the square root of area/2."/>
                     <param argument="n_steps" type="integer" value="50" label="Number of steps for the support" />
                     <param argument="seed" type="integer" value="" optional="true" label="Randomness seed" />
+                </expand>
+                <expand macro="squidpy_plotting_options">
+                    <param argument="mode" type="select" label="Ripley’s statistics to be plotted">
+                        <option value="F" selected="true">F</option>
+                        <option value="G">G</option>
+                        <option value="L">L</option>
+                    </param>
+                    <param argument="plot_sims" type="boolean" checked="true" label="Whether to overlay simulations in the plot" />
+                    <expand macro="squidpy_plotting_option_palette" />
                 </expand>
             </when>
             <when value="ligrec">
@@ -162,10 +185,26 @@
                     <param argument="gene_symbols" type="text" value="" optional="true" label="Key in anndata.AnnData.var to use instead of anndata.AnnData.var_names" help="Optional." />
                     <param argument="seed" type="integer" value="" label="Randomness seed" />
                 </expand>
+                <expand macro="squidpy_plotting_options">
+                    <param argument="source_groups" type="text" value="" optional="true" label="Source interaction clusters" help="Comma delimited. If None, select all clusters." />
+                    <param argument="target_groups" type="text" value="" optional="true" label="Target interaction clusters" help="Comma delimited. If None, select all clusters." />
+                    <param argument="means_range" type="text" value="(-inf, inf)" label="Only show interactions whose means are within this closed interval" help="Tuple of floats. e.g.: (-10, 10)." />
+                    <param argument="pvalue_threshold" type="float" value="1.0" label="Only show interactions with p-value less than this threshold" />
+                    <param argument="remove_empty_interactions" type="boolean" checked="true" label="Whether to remove rows and columns that only contain interactions with NaN values?" />
+                    <param argument="remove_nonsig_interactions" type="boolean" checked="false" label="Whether to remove rows and columns that only contain interactions that are larger than `alpha`? " />
+                    <param argument="dendrogram" type="select" label="How to cluster based on the p-values?">
+                        <option value="none" selected="true">None</option>
+                        <option value="interacting_molecules">interacting_molecules</option>
+                        <option value="interacting_clusters">interacting_clusters</option>
+                        <option value="both">both</option>
+                    </param>
+                    <param argument="alpha" type="float" value="0.001" label="Significance threshold" help="All elements with p-values less than alpha will be marked by tori instead of dots." />
+                    <param argument="swap_axes" type="boolean" checked="false" label="Whether to show the cluster combinations as rows and the interacting pairs as columns" />
+                </expand>
             </when>
             <when value="spatial_autocorr">
                 <expand macro="squidpy_spatial_options">
-                    <param argument="connectivity_key" type="text" value="" optional="true" label="Key in anndata.AnnData.obsp where spatial connectivities are stored" />
+                    <param argument="connectivity_key" type="text" value="spatial_connectivities" label="Key in anndata.AnnData.obsp where spatial connectivities are stored" />
                     <param argument="genes" type="text" value="" optional="true" label="List of gene names, as stored in anndata.AnnData.var_names" help="Comma delitimited.  Used to compute global spatial autocorrelation statistic. If None, it’s computed anndata.AnnData.var ['highly_variable']." />
                     <param argument="mode" type="select">
                         <option value="moran" selected="true">moran</option>
@@ -210,7 +249,10 @@
         </conditional>
     </inputs>
     <outputs>
-        <data format="h5ad" name="output" label="Squidpy.graph.${analyses.selected_tool} on ${on_string}" />
+        <data format="h5ad" name="output" label="Squidpy.gr.${analyses.selected_tool} on ${on_string}" />
+        <data format="png" name="output_plot" label="Squidpy.pl.${analyses.selected_tool} on ${on_string}" >
+            <filter>analyses['selected_tool'] in ['nhood_enrichment', 'centrality_scores', 'interaction_matrix', 'ligrec', 'ripley', 'co_occurrence']</filter>
+        </data>
     </outputs>
     <tests>
         <test>
