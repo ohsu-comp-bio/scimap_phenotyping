@@ -1,0 +1,73 @@
+<tool id="gate_finder" name="Gate Finder" version="@VERSION@" profile="20.01">
+    <description>displays a series of gating outcomes using Vitessce</description>
+    <macros>
+        <import>main_macros.xml</import>
+    </macros>
+    <expand macro="vitessce_requirements"/>
+    <expand macro="macro_stdio" />
+    <version_command>echo "@VERSION@"</version_command>
+    <command>
+        <![CDATA[
+        export BF_MAX_MEM="\${GALAXY_MEMORY_MB}m" &&
+        mkdir -p '${output.files_path}/A/0' &&
+        ln -sf '$image' '${output.files_path}/A/0/image01.ome.tiff' &&
+        #if $masks and $masks.ext == 'tiff'
+            bfconvert -pyramid-resolutions 4 -pyramid-scale 2 '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
+        #end if
+        python '$__tool_directory__/vitessce_spatial.py'
+            --inputs '$inputs'
+            --output '${output.files_path}'
+            --image '${output.files_path}/A/0/image01.ome.tiff'
+            #if $masks
+                --masks '${output.files_path}/A/0/masks01.ome.tiff'
+            #end if
+            --anndata '$anndata' &&
+
+        cp -R '$__tool_directory__/static' '${output.files_path}' &&
+        cp '$__tool_directory__/index.html' '$output';
+
+
+        ]]>
+    </command>
+    <configfiles>
+        <inputs name="inputs" />
+    </configfiles>
+    <inputs>
+        <param name="image" type="data" format="ome.tiff" label="Select the image (OME-TIFF)" />
+        <param name="masks" type="data" format="tiff,ome.tiff" optional="true" label="Select masks for the OME Tiff image (Optional)" />
+        <param name="anndata" type="data" format="h5ad" label="Select the anndata containing marker intensities" />
+        <param name="marker" type="text" value=""  label="Marker for which gate is to be defined" help="E.g.: CD45." />
+        <param name="from_gate" type="integer" value="6" label="Start value gate of interest" help="Integer. Optional" />
+        <param name="to_gate" type="integer" value="8" label="End value of the gate of interest." help="Integer. Optional" />
+        <param name="increment" type="float" value="0.1" label="Increments between the start and end values" help="Float." />
+        <param name="x_coordinate" type="text" value="X_centroid" optional="true" label="X axis coordinate column name in AnnData object" />
+        <param name="y_coordinate" type="text" value="Y_centroid" optional="true" label="X axis coordinate column name in AnnData object" />
+    </inputs>
+    <outputs>
+        <data format="html" name="output" />
+    </outputs>
+    <tests>
+        <test>
+        </test>
+    </tests>
+    <help>
+        <![CDATA[
+**What it does**
+
+
+**Input**
+
+OME-TIFF image.
+Segmentation masks (optional).
+AnnData with marker intensities.
+
+**Output**
+
+An HTML file with Vitessce component. 
+
+
+        ]]>
+    </help>
+    <citations>
+    </citations>
+</tool>
