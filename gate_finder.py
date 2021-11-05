@@ -70,7 +70,7 @@ def main(inputs, output, image, anndata, masks=None):
     gate_names = []
     for num in np.arange(from_gate, to_gate, increment):
         num = round(num, 3)
-        key = str(num)
+        key = marker + '--' +str(num)
         adata.obs[key] = gate(num, marker_values)
         gate_names.append(key)
     
