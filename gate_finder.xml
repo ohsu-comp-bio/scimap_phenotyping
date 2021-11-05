@@ -8,13 +8,12 @@
     <version_command>echo "@VERSION@"</version_command>
     <command>
         <![CDATA[
-        export BF_MAX_MEM="\${GALAXY_MEMORY_MB}m" &&
         mkdir -p '${output.files_path}/A/0' &&
         ln -sf '$image' '${output.files_path}/A/0/image01.ome.tiff' &&
         #if $masks and $masks.ext == 'tiff'
             bfconvert -pyramid-resolutions 4 -pyramid-scale 2 '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
         #end if
-        python '$__tool_directory__/vitessce_spatial.py'
+        python '$__tool_directory__/gate_finder.py'
             --inputs '$inputs'
             --output '${output.files_path}'
             --image '${output.files_path}/A/0/image01.ome.tiff'

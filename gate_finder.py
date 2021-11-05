@@ -4,6 +4,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+import scanpy as sc
 from pathlib import Path
 from anndata import read_h5ad
 from vitessce import (
@@ -64,18 +65,22 @@ def main(inputs, output, image, anndata, masks=None):
         dd = np.where(dd < g, 0, dd)
         np.warnings.filterwarnings('ignore')
         dd = np.where(dd >= g, 1, dd)
-        dd = pd.DataFrame(dd, index = d.index, columns = ['gate-' + str(g)])
         return dd
 
     # Identify the list of increments
     gate_names = []
-    for num in range(from_gate, to_gate, increment):
+    for num in np.arange(from_gate, to_gate, increment):
         num = round(num, 3)
         key = str(num)
         adata.obs[key] = gate(num, marker_values)
         gate_names.append(key)
     
     adata.obsm['XY_coordinate'] = adata.obs[[x_coordinate, y_coordinate]].values
+
+    sc.pp.neighbors(adata, n_neighbors=30, n_pcs=10)
+    sc.tl.umap(adata)
+    mappings_obsm = 'X_umap'
+    mappings_obsm_name = "UMAP"
 
     vc = VitessceConfig(name=None,description=None)
     dataset = vc.add_dataset()
@@ -89,6 +94,8 @@ def main(inputs, output, image, anndata, masks=None):
     dataset.add_object(
         AnnDataWrapper(
             adata,
+            mappings_obsm=[mappings_obsm],
+            mappings_obsm_names=[mappings_obsm_name],
             spatial_centroid_obsm='XY_coordinate',
             cell_set_obs=gate_names,
             cell_set_obs_names=[obj[0].upper() + obj[1:] for obj in gate_names],
@@ -97,12 +104,13 @@ def main(inputs, output, image, anndata, masks=None):
     )
     spatial = vc.add_view(dataset, cm.SPATIAL)
     cellsets = vc.add_view(dataset, cm.CELL_SETS)
+    scattorplot = vc.add_view(dataset, cm.SCATTERPLOT, mapping=mappings_obsm_name)
     status = vc.add_view(dataset, cm.STATUS)
     lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
     heatmap = vc.add_view(dataset, cm.HEATMAP)
     genes = vc.add_view(dataset, cm.GENES)
     cell_set_expression = vc.add_view(dataset, cm.CELL_SET_EXPRESSION)
-    vc.layout((status / genes / cell_set_expression) | (cellsets / lc ) | (heatmap / spatial ))
+    vc.layout((status / genes / cell_set_expression) | (cellsets / lc / scattorplot) | (heatmap / spatial ))
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:
