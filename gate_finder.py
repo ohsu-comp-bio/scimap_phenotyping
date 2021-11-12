@@ -45,7 +45,7 @@ def get_gmm_phenotype(data):
     gmm.fit(data_norm)
     gate = np.mean(gmm.means_)
 
-    return gate(gate, data_norm.ravel())
+    return get_gate_phenotype(gate, np.ravel(data_norm))
 
 
 def main(inputs, output, image, anndata, masks=None):
