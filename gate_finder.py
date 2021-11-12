@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from anndata import read_h5ad
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.mixture import GaussianMixture
 from vitessce import (
     VitessceConfig,
     Component as cm,
@@ -13,6 +15,37 @@ from vitessce import (
     OmeTiffWrapper,
     MultiImageWrapper,
 )
+
+
+# Generate binarized phenotype for a gate
+def get_gate_phenotype(g, d):
+    dd = d.copy()
+    dd = np.where(dd < g, 0, dd)
+    np.warnings.filterwarnings('ignore')
+    dd = np.where(dd >= g, 1, dd)
+    return dd
+
+
+def get_gmm_phenotype(data):
+    low = np.percentile(data, 0.01)
+    high = np.percentile(data, 99.99)
+    data = data.clip(data, low, high)
+
+    sum = data.sum()
+    median = data.median()
+    data_med = data / sum * median
+
+    data_log = np.log1p(data_med)
+    data_log = data_log.reshape(-1, 1)
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    data_norm = scaler.fit_transform(data_log)
+
+    gmm = GaussianMixture(n_components=2)
+    gmm.fit(data_norm)
+    gate = np.mean(gmm.means_)
+
+    return gate(gate, data_norm.ravel())
 
 
 def main(inputs, output, image, anndata, masks=None):
@@ -57,22 +90,18 @@ def main(inputs, output, image, anndata, masks=None):
         columns = adata.var.index,
         index= adata.obs.index)
     marker_values = data[[marker]].values
-    
-    # Generate a dataframe with various gates
-    def gate (g, d):
-        dd = d.copy()
-        dd = np.where(dd < g, 0, dd)
-        np.warnings.filterwarnings('ignore')
-        dd = np.where(dd >= g, 1, dd)
-        return dd
 
     # Identify the list of increments
     gate_names = []
     for num in np.arange(from_gate, to_gate, increment):
         num = round(num, 3)
         key = marker + '--' +str(num)
-        adata.obs[key] = gate(num, marker_values)
+        adata.obs[key] = get_gate_phenotype(num, marker_values)
         gate_names.append(key)
+
+    adata.obs['GMM_auto'] = get_gmm_phenotype(marker_values)
+    gate_names.append('GMM_auto')
+
     
     adata.obsm['XY_coordinate'] = adata.obs[[x_coordinate, y_coordinate]].values
 
