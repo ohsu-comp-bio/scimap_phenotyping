@@ -29,10 +29,10 @@ def get_gate_phenotype(g, d):
 def get_gmm_phenotype(data):
     low = np.percentile(data, 0.01)
     high = np.percentile(data, 99.99)
-    data = data.clip(data, low, high)
+    data = np.clip(data, low, high)
 
-    sum = data.sum()
-    median = data.median()
+    sum = np.sum(data)
+    median = np.median(data)
     data_med = data / sum * median
 
     data_log = np.log1p(data_med)
