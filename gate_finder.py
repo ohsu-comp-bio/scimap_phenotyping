@@ -86,17 +86,18 @@ def main(inputs, output, image, anndata, masks=None):
         adata.X = adata.raw.X
 
     data = pd.DataFrame(
-        np.log1p(adata.X),
+        adata.X,
         columns = adata.var.index,
         index= adata.obs.index)
     marker_values = data[[marker]].values
+    marker_values_log = np.log1p(marker_values)
 
     # Identify the list of increments
     gate_names = []
     for num in np.arange(from_gate, to_gate, increment):
         num = round(num, 3)
         key = marker + '--' +str(num)
-        adata.obs[key] = get_gate_phenotype(num, marker_values)
+        adata.obs[key] = get_gate_phenotype(num, marker_values_log)
         gate_names.append(key)
 
     adata.obs['GMM_auto'] = get_gmm_phenotype(marker_values)
