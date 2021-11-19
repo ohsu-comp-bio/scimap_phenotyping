@@ -306,11 +306,13 @@ This tool includes various of single cell spatial analysis utils provided by Squ
 
 **Input**
 
-AnnData.
+*AnnData*
 
 **Output**
 
-Anndata
+*Anndata*
+
+*Plotting (PNG) if applicable*
 
 
         ]]>
