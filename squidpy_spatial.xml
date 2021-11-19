@@ -1,4 +1,4 @@
-<tool id="spuidpy_spatial" name="Squidpy Graph and Plotting" version="@VERSION@" profile="20.01">
+<tool id="squidpy_spatial" name="Squidpy Graph and Plotting" version="@VERSION@" profile="20.01">
     <description>for spatial analysis </description>
     <macros>
         <import>main_macros.xml</import>
