@@ -9,9 +9,9 @@
     <command>
         <![CDATA[
         export BF_MAX_MEM="\${GALAXY_MEMORY_MB}m" &&
-        n_resolutions=\$(showinf -nopix -nometa -noflat '$image' | grep '^\s*Resolutions\s*=\s*\d$' -m1 | cut -d'=' -f2 | xargs) &&
         mkdir -p '${output.files_path}/A/0' &&
         ln -sf '$image' '${output.files_path}/A/0/image01.ome.tiff' &&
+        n_resolutions=\$(showinf -nopix -nometa -noflat '${output.files_path}/A/0/image01.ome.tiff' | grep '^\s*Resolutions\s*=\s*\d$' -m1 | cut -d'=' -f2 | xargs) &&
         #if $masks and $masks.ext == 'tiff'
             bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale 2 '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
         #end if
