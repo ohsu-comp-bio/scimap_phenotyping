@@ -11,9 +11,30 @@
         export BF_MAX_MEM="\${GALAXY_MEMORY_MB}m" &&
         mkdir -p '${output.files_path}/A/0' &&
         ln -sf '$image' '${output.files_path}/A/0/image01.ome.tiff' &&
-        n_resolutions=\$(showinf -nopix -nometa -noflat '${output.files_path}/A/0/image01.ome.tiff' | grep '^\s*Resolutions\s*=\s*\d$' -m1 | cut -d'=' -f2 | xargs) &&
+        info="\$(showinf -nopix -nometa -noflat '${output.files_path}/A/0/image01.ome.tiff'" &&
+        echo '>showinf -nopix -nometa -noflat \$image' &&
+        echo "\$info" &&
+        n_resolutions=\$(echo \$info | grep '^\s*Resolutions\s*=' -m1 | cut -d'=' -f2 | xargs) &&
+        pyramid_scale=1 &&
+        if [ -z "\$n_resolutions" ]; then
+            echo "Warning: Failded to retrieve the number of pyramid resolutions. Set pyramid resolutions to 4 and scale to 2!";
+            n_resolutions=4;
+            pyramid_scale=2;
+        else
+            echo "Found the number of pyramid resolutions: \$n_resolutions.";
+            if [[ \$n_resolutions -gt 1 ]]; then
+                sizeX0=\$(echo \$info | grep '^\s*sizeX\[0\]\s*=' -m1 | cut -d'=' -f2 | xargs) ;
+                sizeX0=\$(echo \$info | grep '^\s*sizeX\[1\]\s*=' -m1 | cut -d'=' -f2 | xargs) ;
+                if [[ \$sizeX0 -gt 0 ]] && [[ \$sizeX1 -gt 0 ]]; then
+                    pyramid_scale=\$(((\$sizeX0 + \$sizeX1 / 2 ) / \$sizeX1));
+                    echo "Calculate pyramid scale: \$sizeX0 / \$sizeX0 ~= \$pyramid_scale.";
+                else
+                    pyramid_scale=2;
+                    echo "Warning: Failed to retrieve the first two resolutions. Set pyramid scale to 2!";
+            fi &&
+        fi &&
         #if $masks and $masks.ext == 'tiff'
-            bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale 2 '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
+            bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
         #end if
         python '$__tool_directory__/vitessce_spatial.py'
             --inputs '$inputs'
