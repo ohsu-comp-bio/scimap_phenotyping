@@ -35,7 +35,9 @@
             fi ;
         fi &&
         #if $masks and $masks.ext == 'tiff'
-            bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
+            convert_cmd="bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale '$masks' '${output.files_path}/A/0/masks01.ome.tiff'" &&
+            echo ">\$convert_cmd" &&
+            eval \$convert_cmd &&
         #end if
         python '$__tool_directory__/vitessce_spatial.py'
             --inputs '$inputs'
