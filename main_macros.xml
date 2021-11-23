@@ -71,7 +71,7 @@
         </expand>
     </xml>
 
-    <xml name="vitessce_cmd">
+    <xml name="vitessce_cmd" token_tool_id="vitessce_spatial">
         <command>
         <![CDATA[
         export BF_MAX_MEM="\${GALAXY_MEMORY_MB}m" &&
@@ -105,7 +105,7 @@
             echo "\n>\$convert_cmd" &&
             eval \$convert_cmd &&
         #end if
-        python '$__tool_directory__/vitessce_spatial.py'
+        python '$__tool_directory__/@TOOL_ID@.py'
             --inputs '$inputs'
             --output '${output.files_path}'
             --image '${output.files_path}/A/0/image01.ome.tiff'
