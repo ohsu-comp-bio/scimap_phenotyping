@@ -13,6 +13,10 @@
     <inputs>
         <param name="image" type="data" format="ome.tiff" label="Select the image (OME-TIFF)" />
         <param name="masks" type="data" format="tiff,ome.tiff" optional="true" label="Select masks for the OME Tiff image (Optional)" />
+        <section name="do_phenotyping" title=" ">
+            <param name="phenotyping_choice" type="hidden" value="true"/>
+        </section>
+        <param name="phenotyping_choice" type="hidden" value="yes" />
         <param name="anndata" type="data" format="h5ad" label="Select the anndata containing marker intensities" />
         <param name="marker" type="text" value=""  label="Marker for which gate is to be defined" help="E.g.: CD45." />
         <param name="from_gate" type="integer" value="6" label="Start value gate of interest" help="Integer. Optional" />
@@ -26,6 +30,13 @@
     </outputs>
     <tests>
         <test>
+            <param name="image" value="reactive_core.ome.tiff" ftype="ome.tiff" />
+            <param name="anndata" value="tutorial_data_pheno.h5ad" ftype="h5ad" />
+            <param name="marker" value="CD45" />
+            <param name="from_gate" value="5" />
+            <param name="to_gate" value="9" />
+            <param name="increment" value="0.5" />
+            <output name="output" file="tutorial_vitessce.html" compare="sim_size" delta="20" />
         </test>
     </tests>
     <help>

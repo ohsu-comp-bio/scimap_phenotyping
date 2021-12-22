@@ -112,8 +112,10 @@
             #if $masks
                 --masks '${output.files_path}/A/0/masks01.ome.tiff'
             #end if
-            --anndata '$anndata' &&
-
+            #if $do_phenotyping.phenotyping_choice
+            --anndata '$anndata'
+            #end if
+            &&
         cp -R '$__tool_directory__/static' '${output.files_path}' &&
         cp '$__tool_directory__/index.html' '$output';
 

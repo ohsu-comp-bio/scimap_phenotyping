@@ -14,7 +14,7 @@ from vitessce import (
 )
 
 
-def main(inputs, output, image, anndata, masks=None):
+def main(inputs, output, image, anndata=None, masks=None):
     """
     Parameter
     ---------
@@ -34,8 +34,29 @@ def main(inputs, output, image, anndata, masks=None):
     with open(inputs, 'r') as param_handler:
         params = json.load(param_handler)
 
+    vc = VitessceConfig(name=None, description=None)
+    dataset = vc.add_dataset()
+    image_wrappers=[OmeTiffWrapper(img_path=image, name='OMETIFF')]
+    if masks:
+        image_wrappers.append(
+            OmeTiffWrapper(img_path=masks, name='MASKS', is_bitmask=True)
+        )
+    dataset.add_object(MultiImageWrapper(image_wrappers))
+
+    status = vc.add_view(dataset, cm.STATUS)
+    spatial = vc.add_view(dataset, cm.SPATIAL)
+    lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
+
+    if not anndata:
+        vc.layout( status / lc | spatial )
+        config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
+        with open(Path(output).joinpath('config.json'), 'w') as f:
+            json.dump(config_dict, f, indent=4)
+        return
+
     adata = read_h5ad(anndata)
 
+    params = params['do_phenotyping']
     embedding = params['scatterplot_embeddings']['embedding']
     embedding_options = params['scatterplot_embeddings']['options']
     if embedding == 'umap':
@@ -53,17 +74,7 @@ def main(inputs, output, image, anndata, masks=None):
         mappings_obsm_name = "PCA"
 
     adata.obsm['XY_centroid'] = adata.obs[['X_centroid', 'Y_centroid']].values
-    vc = VitessceConfig(
-        name=(params['name'] or None),
-        description=(params['description'] or None)
-    )
-    dataset = vc.add_dataset()
-    image_wrappers=[OmeTiffWrapper(img_path=image, name='OMETIFF')]
-    if masks:
-        image_wrappers.append(
-            OmeTiffWrapper(img_path=masks, name='MASKS', is_bitmask=True)
-        )
-    dataset.add_object(MultiImageWrapper(image_wrappers))
+
     cell_set_obs = params['phenotype_factory']['phenotypes']
     if not isinstance(cell_set_obs, list):
         cell_set_obs = [x.strip() for x in cell_set_obs.split(',')]
@@ -79,15 +90,14 @@ def main(inputs, output, image, anndata, masks=None):
             expression_matrix="X"
         )
     )
-    spatial = vc.add_view(dataset, cm.SPATIAL)
+
     cellsets = vc.add_view(dataset, cm.CELL_SETS)
     scattorplot = vc.add_view(dataset, cm.SCATTERPLOT, mapping=mappings_obsm_name)
-    status = vc.add_view(dataset, cm.STATUS)
-    lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
     heatmap = vc.add_view(dataset, cm.HEATMAP)
     genes = vc.add_view(dataset, cm.GENES)
+    cell_set_sizes = vc.add_view(dataset, cm.CELL_SET_SIZES)
     cell_set_expression = vc.add_view(dataset, cm.CELL_SET_EXPRESSION)
-    vc.layout((status / genes / cell_set_expression) | (cellsets / lc / scattorplot ) | (heatmap / spatial ))
+    vc.layout((status / genes / cell_set_expression / cell_set_sizes) | (cellsets / lc / scattorplot ) | (heatmap / spatial ))
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:
@@ -99,7 +109,7 @@ if __name__ == '__main__':
     aparser.add_argument("-i", "--inputs", dest="inputs", required=True)
     aparser.add_argument("-e", "--output", dest="output", required=True)
     aparser.add_argument("-g", "--image", dest="image", required=True)
-    aparser.add_argument("-a", "--anndata", dest="anndata", required=True)
+    aparser.add_argument("-a", "--anndata", dest="anndata", required=False)
     aparser.add_argument("-m", "--masks", dest="masks", required=False)
 
     args = aparser.parse_args()
