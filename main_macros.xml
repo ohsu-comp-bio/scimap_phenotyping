@@ -104,6 +104,8 @@
             convert_cmd="bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale '$masks' '${output.files_path}/A/0/masks01.ome.tiff'" &&
             echo "\n>\$convert_cmd" &&
             eval \$convert_cmd &&
+        #elif $masks and $masks.ext == 'ome.tiff'
+            ln -sf '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
         #end if
         python '$__tool_directory__/@TOOL_ID@.py'
             --inputs '$inputs'
