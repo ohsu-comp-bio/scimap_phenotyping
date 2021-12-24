@@ -128,10 +128,11 @@ def main(inputs, output, image, anndata, masks=None):
     cellsets = vc.add_view(dataset, cm.CELL_SETS)
     status = vc.add_view(dataset, cm.STATUS)
     lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
+    genes = vc.add_view(dataset, cm.GENES)
     cell_set_sizes = vc.add_view(dataset, cm.CELL_SET_SIZES)
     cell_set_expression = vc.add_view(dataset, cm.CELL_SET_EXPRESSION)
 
-    vc.layout((status / cellsets / lc ) | (cell_set_sizes / cell_set_expression) | (spatial))
+    vc.layout((status / genes / cell_set_expression) | (cellsets / cell_set_sizes / lc ) | (spatial))
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:
