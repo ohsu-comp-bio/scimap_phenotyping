@@ -97,7 +97,7 @@ def main(inputs, output, image, anndata=None, masks=None):
     genes = vc.add_view(dataset, cm.GENES)
     cell_set_sizes = vc.add_view(dataset, cm.CELL_SET_SIZES)
     cell_set_expression = vc.add_view(dataset, cm.CELL_SET_EXPRESSION)
-    vc.layout((status / genes / cell_set_expression / cell_set_sizes) | (cellsets / lc / scattorplot ) | (heatmap / spatial ))
+    vc.layout((status / genes / cell_set_expression) | (cellsets / lc / scattorplot) | (cell_set_sizes / heatmap / spatial))
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:
