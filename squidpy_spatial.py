@@ -2,7 +2,6 @@ import argparse
 import ast
 import json
 import warnings
-from pathlib import Path
 
 import pandas as pd
 import squidpy as sq
@@ -42,7 +41,7 @@ def main(inputs, anndata, output, output_plot):
 
     for k, v in options.items():
         if not isinstance(v, str):
-                continue
+            continue
 
         if v in ('', 'none'):
             options[k] = None

@@ -87,8 +87,9 @@ def main(inputs, output, image, anndata, masks=None):
 
     data = pd.DataFrame(
         adata.X,
-        columns = adata.var.index,
-        index= adata.obs.index)
+        columns=adata.var.index,
+        index=adata.obs.index
+    )
     marker_values = data[[marker]].values
     marker_values_log = np.log1p(marker_values)
 
@@ -96,19 +97,18 @@ def main(inputs, output, image, anndata, masks=None):
     gate_names = []
     for num in np.arange(from_gate, to_gate, increment):
         num = round(num, 3)
-        key = marker + '--' +str(num)
+        key = marker + '--' + str(num)
         adata.obs[key] = get_gate_phenotype(num, marker_values_log)
         gate_names.append(key)
 
     adata.obs['GMM_auto'] = get_gmm_phenotype(marker_values)
     gate_names.append('GMM_auto')
 
-    
     adata.obsm['XY_coordinate'] = adata.obs[[x_coordinate, y_coordinate]].values
 
-    vc = VitessceConfig(name=None,description=None)
+    vc = VitessceConfig(name=None, description=None)
     dataset = vc.add_dataset()
-    image_wrappers=[OmeTiffWrapper(img_path=image, name='OMETIFF')]
+    image_wrappers = [OmeTiffWrapper(img_path=image, name='OMETIFF')]
     if masks:
         image_wrappers.append(
             OmeTiffWrapper(img_path=masks, name='MASKS', is_bitmask=True)
@@ -132,7 +132,11 @@ def main(inputs, output, image, anndata, masks=None):
     cell_set_sizes = vc.add_view(dataset, cm.CELL_SET_SIZES)
     cell_set_expression = vc.add_view(dataset, cm.CELL_SET_EXPRESSION)
 
-    vc.layout((status / genes / cell_set_expression) | (cellsets / cell_set_sizes / lc ) | (spatial))
+    vc.layout(
+        (status / genes / cell_set_expression) |
+        (cellsets / cell_set_sizes / lc) |
+        (spatial)
+    )
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:

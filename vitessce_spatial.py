@@ -36,7 +36,7 @@ def main(inputs, output, image, anndata=None, masks=None):
 
     vc = VitessceConfig(name=None, description=None)
     dataset = vc.add_dataset()
-    image_wrappers=[OmeTiffWrapper(img_path=image, name='OMETIFF')]
+    image_wrappers = [OmeTiffWrapper(img_path=image, name='OMETIFF')]
     if masks:
         image_wrappers.append(
             OmeTiffWrapper(img_path=masks, name='MASKS', is_bitmask=True)
@@ -48,7 +48,7 @@ def main(inputs, output, image, anndata=None, masks=None):
     lc = vc.add_view(dataset, cm.LAYER_CONTROLLER)
 
     if not anndata:
-        vc.layout( status / lc | spatial )
+        vc.layout(status / lc | spatial)
         config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
         with open(Path(output).joinpath('config.json'), 'w') as f:
             json.dump(config_dict, f, indent=4)
@@ -97,7 +97,11 @@ def main(inputs, output, image, anndata=None, masks=None):
     genes = vc.add_view(dataset, cm.GENES)
     cell_set_sizes = vc.add_view(dataset, cm.CELL_SET_SIZES)
     cell_set_expression = vc.add_view(dataset, cm.CELL_SET_EXPRESSION)
-    vc.layout((status / genes / cell_set_expression) | (cellsets / lc / scattorplot) | (cell_set_sizes / heatmap / spatial))
+    vc.layout(
+        (status / genes / cell_set_expression) |
+        (cellsets / lc / scattorplot) |
+        (cell_set_sizes / heatmap / spatial)
+    )
     config_dict = vc.export(to='files', base_url='http://localhost', out_dir=output)
 
     with open(Path(output).joinpath('config.json'), 'w') as f:

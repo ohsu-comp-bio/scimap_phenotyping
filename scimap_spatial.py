@@ -42,7 +42,7 @@ def main(inputs, anndata, output):
     for k, v in options.items():
         if v == '':
             options[k] = None
-    
+
     tool_func(adata, **options)
 
     adata.write(output)

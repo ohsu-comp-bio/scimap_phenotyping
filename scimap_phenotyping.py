@@ -3,9 +3,7 @@ import warnings
 
 import pandas as pd
 import scimap as sm
-from pathlib import Path
 from anndata import read_h5ad
-
 
 
 def main(
@@ -43,13 +41,13 @@ def main(
         sep = ',' if manual_gates_ext == 'csv' else '\t'
         manual_gates = pd.read_csv(manual_gates, sep=sep)
 
-    adata = sm.pp.rescale (adata, gate=manual_gates, save_fig=rescale_plots)
+    adata = sm.pp.rescale(adata, gate=manual_gates, save_fig=rescale_plots)
 
     # Phenotype cells
     # Load the gating workflow
     sep = ',' if gating_workflow_ext == 'csv' else '\t'
     phenotype = pd.read_csv(gating_workflow, sep=sep)
-    adata = sm.tl.phenotype_cells (adata, phenotype=phenotype, label="phenotype")
+    adata = sm.tl.phenotype_cells(adata, phenotype=phenotype, label="phenotype")
 
     # Summary of the phenotyping
     print(adata.obs['phenotype'].value_counts())
@@ -65,7 +63,8 @@ if __name__ == '__main__':
     aparser.add_argument("-s", "--gating_workflow_ext", dest="gating_workflow_ext", required=True)
     aparser.add_argument("-m", "--manual_gates", dest="manual_gates", required=False)
     aparser.add_argument("-S", "--manual_gates_ext", dest="manual_gates_ext", required=False)
-    aparser.add_argument("-p", "--rescale_plots", dest="rescale_plots", action="store_true", default=False, required=False)
+    aparser.add_argument("-p", "--rescale_plots", dest="rescale_plots", action="store_true",
+                         default=False, required=False)
 
     args = aparser.parse_args()
 
