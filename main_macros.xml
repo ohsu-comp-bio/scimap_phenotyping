@@ -101,7 +101,7 @@
                     fi;
                 fi ;
             fi &&
-            convert_cmd="bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale '$masks' '${output.files_path}/A/0/masks01.ome.tiff'" &&
+            convert_cmd="bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale -noflat '$masks' '${output.files_path}/A/0/masks01.ome.tiff'" &&
             echo "\n>\$convert_cmd" &&
             eval \$convert_cmd &&
         #elif $masks and $masks.ext == 'ome.tiff'
