@@ -107,6 +107,9 @@
             convert_cmd="bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale -noflat '$masks' '${output.files_path}/A/0/masks01.ome.tiff'" &&
             echo "\n>\$convert_cmd" &&
             eval \$convert_cmd &&
+            masks_info_new=\$(showinf -nopix -nometa -noflat '${output.files_path}/A/0/masks01.ome.tiff') &&
+            echo ">showinf -nopix -nometa -noflat '${output.files_path}/A/0/masks01.ome.tiff'" &&
+            echo "\$masks_info_new\n" &&
         #elif $masks and $masks.ext == 'ome.tiff'
             ln -sf '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
         #end if
