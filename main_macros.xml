@@ -85,7 +85,7 @@
             echo '>showinf -nopix -nometa \$masks' &&
             echo "\$masks_info\n" &&
             masks_n_resolutions=\$(echo "\$masks_info" | grep '^\s*Resolutions\s*=' -m1 | cut -d'=' -f2 | xargs) &&
-            if [ -z $masks_n_resolutions ]; then
+            if [ -z \$masks_n_resolutions ]; then
                 n_resolutions=\$(echo "\$info" | grep '^\s*Resolutions\s*=' -m1 | cut -d'=' -f2 | xargs) &&
                 pyramid_scale=1 &&
                 if [ -z "\$n_resolutions" ]; then
