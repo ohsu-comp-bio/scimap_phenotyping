@@ -113,7 +113,8 @@
                 echo "\n>showinf -nopix -nometa -noflat '${output.files_path}/A/0/masks01.ome.tiff'";
                 echo "\$masks_info_new\n";
             else
-                ln -sf '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
+                ln -sf '$masks' '${output.files_path}/A/0/masks01.ome.tiff';
+            fi &&
         #end if
         python '$__tool_directory__/@TOOL_ID@.py'
             --inputs '$inputs'
