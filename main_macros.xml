@@ -77,41 +77,43 @@
         export BF_MAX_MEM="\${GALAXY_MEMORY_MB}m" &&
         mkdir -p '${output.files_path}/A/0' &&
         ln -sf '$image' '${output.files_path}/A/0/image01.ome.tiff' &&
-        #if $masks and $masks.ext == 'tiff'
+        #if $masks
             info=\$(showinf -nopix -nometa -noflat '${output.files_path}/A/0/image01.ome.tiff') &&
             echo '>showinf -nopix -nometa -noflat \$image' &&
             echo "\$info\n" &&
             masks_info=\$(showinf -nopix -nometa '$masks') &&
             echo '>showinf -nopix -nometa \$masks' &&
             echo "\$masks_info\n" &&
-            n_resolutions=\$(echo "\$info" | grep '^\s*Resolutions\s*=' -m1 | cut -d'=' -f2 | xargs) &&
-            pyramid_scale=1 &&
-            if [ -z "\$n_resolutions" ]; then
-                echo "Warning: Failded to retrieve the number of pyramid resolutions. Set pyramid resolutions to 4 and scale to 2!";
-                n_resolutions=4;
-                pyramid_scale=2;
+            masks_n_resolutions=\$(echo "\$masks_info" | grep '^\s*Resolutions\s*=' -m1 | cut -d'=' -f2 | xargs) &&
+            if [ -z $masks_n_resolutions ]; then
+                n_resolutions=\$(echo "\$info" | grep '^\s*Resolutions\s*=' -m1 | cut -d'=' -f2 | xargs) &&
+                pyramid_scale=1 &&
+                if [ -z "\$n_resolutions" ]; then
+                    echo "Warning: Failded to retrieve the number of pyramid resolutions. Set pyramid resolutions to 4 and scale to 2!";
+                    n_resolutions=4;
+                    pyramid_scale=2;
+                else
+                    echo "Found the number of pyramid resolutions: \$n_resolutions";
+                    if [ "\$n_resolutions" -gt 1 ]; then
+                        sizeX0=\$(echo "\$info" | grep '^\s*sizeX\[0\]\s*=' -m1 | cut -d'=' -f2 | xargs) ;
+                        sizeX1=\$(echo "\$info" | grep '^\s*sizeX\[1\]\s*=' -m1 | cut -d'=' -f2 | xargs) ;
+                        if [ "\$sizeX0" -gt 0 ] && [ "\$sizeX1" -gt 0 ]; then
+                            pyramid_scale=\$(((\$sizeX0 + \$sizeX1 / 2 ) / \$sizeX1));
+                            echo "Calculate pyramid scale: \$sizeX0 / \$sizeX1 ~= \$pyramid_scale.";
+                        else
+                            pyramid_scale=2;
+                            echo "Warning: Failed to calculate the pyramid scale; set it to 2!";
+                        fi;
+                    fi ;
+                fi &&
+                convert_cmd="bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale -noflat '$masks' '${output.files_path}/A/0/masks01.ome.tiff'" &&
+                echo "\n>\$convert_cmd" &&
+                eval \$convert_cmd &&
+                masks_info_new=\$(showinf -nopix -nometa '${output.files_path}/A/0/masks01.ome.tiff') &&
+                echo "\n>showinf -nopix -nometa '${output.files_path}/A/0/masks01.ome.tiff'" &&
+                echo "\$masks_info_new\n" &&
             else
-                echo "Found the number of pyramid resolutions: \$n_resolutions";
-                if [ "\$n_resolutions" -gt 1 ]; then
-                    sizeX0=\$(echo "\$info" | grep '^\s*sizeX\[0\]\s*=' -m1 | cut -d'=' -f2 | xargs) ;
-                    sizeX1=\$(echo "\$info" | grep '^\s*sizeX\[1\]\s*=' -m1 | cut -d'=' -f2 | xargs) ;
-                    if [ "\$sizeX0" -gt 0 ] && [ "\$sizeX1" -gt 0 ]; then
-                        pyramid_scale=\$(((\$sizeX0 + \$sizeX1 / 2 ) / \$sizeX1));
-                        echo "Calculate pyramid scale: \$sizeX0 / \$sizeX1 ~= \$pyramid_scale.";
-                    else
-                        pyramid_scale=2;
-                        echo "Warning: Failed to calculate the pyramid scale; set it to 2!";
-                    fi;
-                fi ;
-            fi &&
-            convert_cmd="bfconvert -pyramid-resolutions \$n_resolutions -pyramid-scale \$pyramid_scale -noflat '$masks' '${output.files_path}/A/0/masks01.ome.tiff'" &&
-            echo "\n>\$convert_cmd" &&
-            eval \$convert_cmd &&
-            masks_info_new=\$(showinf -nopix -nometa '${output.files_path}/A/0/masks01.ome.tiff') &&
-            echo ">showinf -nopix -nometa '${output.files_path}/A/0/masks01.ome.tiff'" &&
-            echo "\$masks_info_new\n" &&
-        #elif $masks and $masks.ext == 'ome.tiff'
-            ln -sf '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
+                ln -sf '$masks' '${output.files_path}/A/0/masks01.ome.tiff' &&
         #end if
         python '$__tool_directory__/@TOOL_ID@.py'
             --inputs '$inputs'
