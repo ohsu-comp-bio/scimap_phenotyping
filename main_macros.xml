@@ -81,6 +81,9 @@
             info=\$(showinf -nopix -nometa -noflat '${output.files_path}/A/0/image01.ome.tiff') &&
             echo '>showinf -nopix -nometa -noflat \$image' &&
             echo "\$info\n" &&
+            masks_info=\$(showinf -nopix -nometa -noflat '$masks') &&
+            echo '>showinf -nopix -nometa -noflat \$masks' &&
+            echo "\$masks_info\n" &&
             n_resolutions=\$(echo "\$info" | grep '^\s*Resolutions\s*=' -m1 | cut -d'=' -f2 | xargs) &&
             pyramid_scale=1 &&
             if [ -z "\$n_resolutions" ]; then
